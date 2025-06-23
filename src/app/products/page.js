@@ -4,6 +4,7 @@ import { getSiteSettings } from '@/lib/site-actions'
 import AddToCartButton from '@/components/AddToCartButton'
 import LogoutButton from '@/components/LogoutButton'
 import ImageWithFallback from '@/components/ImageWithFallback'
+import CartList from '@/components/CartList'
 
 export default async function ProductsPage() {
   const user = await getCurrentUser()
@@ -22,6 +23,88 @@ export default async function ProductsPage() {
         <div className="absolute -top-40 -right-40 w-80 h-80 bg-purple-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob"></div>
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-2000"></div>
         <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-80 h-80 bg-pink-500 rounded-full mix-blend-multiply filter blur-xl opacity-20 animate-blob animation-delay-4000"></div>
+      </div>
+
+      {/* Navigation Bar */}
+      <div className="relative z-30 bg-black/20 backdrop-blur-md border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-4 py-4">
+          <div className="flex items-center justify-between">
+            {/* Logo */}
+            <Link href="/" className="flex items-center space-x-3">
+              {siteSettings?.logoUrl ? (
+                <img 
+                  src={siteSettings.logoUrl} 
+                  alt={siteSettings?.siteName || 'Livkors'} 
+                  className="h-10 w-10 rounded-full object-cover ring-2 ring-purple-400"
+                />
+              ) : (
+                <img 
+                  src="/logo.jpg" 
+                  alt="Livkors Logo" 
+                  className="h-10 w-10 rounded-full object-cover ring-2 ring-purple-400"
+                />
+              )}
+              <span className="text-xl font-bold text-white">Livkors</span>
+            </Link>
+
+            {/* Navigation Links */}
+            <div className="hidden md:flex items-center space-x-8">
+              <Link href="/" className="text-slate-300 hover:text-white transition-colors">
+                Ana Sayfa
+              </Link>
+              <Link href="/products" className="text-purple-400 font-medium">
+                Ürünler
+              </Link>
+              <Link href="/about" className="text-slate-300 hover:text-white transition-colors">
+                Hakkımızda
+              </Link>
+            </div>
+
+            {/* User Actions */}
+            <div className="flex items-center space-x-4">
+              {user ? (
+                <>
+                  {/* Cart Button */}
+                  <CartList />
+                  
+                  {/* User Menu */}
+                  <div className="flex items-center space-x-3">
+                    <Link 
+                      href="/profile" 
+                      className="text-slate-300 hover:text-white transition-colors"
+                    >
+                      👤 {user.name}
+                    </Link>
+                    {user.role === 'ADMIN' && (
+                      <Link 
+                        href="/admin" 
+                        className="bg-purple-600 text-white px-3 py-1 rounded-lg text-sm hover:bg-purple-500 transition-colors"
+                      >
+                        Admin
+                      </Link>
+                    )}
+                    <LogoutButton />
+                  </div>
+                </>
+              ) : (
+                <div className="flex items-center space-x-3">
+                  <Link 
+                    href="/login" 
+                    className="text-slate-300 hover:text-white transition-colors"
+                  >
+                    Giriş Yap
+                  </Link>
+                  <Link 
+                    href="/register" 
+                    className="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-500 transition-colors"
+                  >
+                    Kayıt Ol
+                  </Link>
+                </div>
+              )}
+            </div>
+          </div>
+        </div>
       </div>
 
       {/* Products Section */}

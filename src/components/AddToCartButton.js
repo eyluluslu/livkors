@@ -1,10 +1,18 @@
 'use client'
 
-import { useActionState } from 'react'
+import { useActionState, useEffect } from 'react'
 import { addToCart } from '@/lib/actions'
 
 export default function AddToCartButton({ productId, quantity = 1, disabled = false, className = '' }) {
   const [state, action] = useActionState(addToCart, {})
+
+  // Sepete ekleme başarılı olduğunda event tetikle
+  useEffect(() => {
+    if (state.success) {
+      // Cart güncelleme event'ini tetikle
+      window.dispatchEvent(new CustomEvent('cartUpdated'))
+    }
+  }, [state.success])
 
   return (
     <div>
