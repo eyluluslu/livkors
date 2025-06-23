@@ -52,6 +52,9 @@ export async function POST(request) {
     console.log('👤 Creating admin user...')
     await createAdminUser(prisma)
     
+    console.log('⚙️ Creating site settings...')
+    await createSiteSettings(prisma)
+    
     await prisma.$disconnect()
     
     console.log('✅ Database initialization completed!')
@@ -130,9 +133,31 @@ async function createAdminUser(prisma) {
     update: {},
     create: {
       email: 'admin@livkors.com',
-      name: 'Admin',
+      name: 'Admin Livkors',
       password: hashedPassword,
       role: 'ADMIN'
+    }
+  })
+}
+
+async function createSiteSettings(prisma) {
+  // Create site settings if not exist
+  await prisma.siteSettings.upsert({
+    where: { id: 'default' },
+    update: {},
+    create: {
+      id: 'default',
+      siteName: 'Livkors',
+      siteDescription: 'Kaliteli çantalar ve mükemmel müşteri hizmetinde öncü markayız'
+    }
+  })
+  
+  // Create about page if not exist
+  await prisma.aboutPage.upsert({
+    where: { id: 'default' },
+    update: {},
+    create: {
+      id: 'default'
     }
   })
 } 

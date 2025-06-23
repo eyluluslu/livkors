@@ -1,0 +1,18 @@
+{
+  "functions": {
+    "src/app/api/*/route.js": {
+      "maxDuration": 10
+    }
+  },
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/next"
+    }
+  ],
+  "env": {
+    "DISABLE_ERD": "true",
+    "NODE_ENV": "production"
+  },
+  "buildCommand": "npm run vercel-build"
+} 
