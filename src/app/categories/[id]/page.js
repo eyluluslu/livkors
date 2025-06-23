@@ -1,9 +1,9 @@
 import Link from 'next/link'
-import { getProductsByCategory } from '@/lib/actions'
-import { getCurrentUser, getCartCount } from '@/lib/actions'
+import { getProductsByCategory, getCurrentUser } from '@/lib/actions'
 import { getSiteSettings } from '@/lib/site-actions'
 import ImageWithFallback from '@/components/ImageWithFallback'
 import AddToCartButton from '@/components/AddToCartButton'
+import CartIcon from '@/components/CartIcon'
 
 export default async function CategoryPage({ params }) {
   const [products, user, siteSettingsResult] = await Promise.all([
@@ -12,7 +12,6 @@ export default async function CategoryPage({ params }) {
     getSiteSettings()
   ])
   
-  const cartCount = user ? await getCartCount() : 0
   const siteSettings = siteSettingsResult.success ? siteSettingsResult.data : null
 
   if (!products || products.length === 0) {
@@ -111,20 +110,7 @@ export default async function CategoryPage({ params }) {
               </div>
               
               <div className="flex items-center space-x-4">
-                {user && (
-                  <Link href="/cart" className="relative group">
-                    <div className="p-3 bg-white/20 backdrop-blur-sm border border-white/30 rounded-full hover:bg-white/30 transition-all duration-300 shadow-lg hover:shadow-xl hover:scale-105">
-                      <svg className="h-6 w-6 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4m0 0L7 13m0 0l-1 5a1 1 0 001 1h9a1 1 0 001-1v-4M9 21h6" />
-                      </svg>
-                      {cartCount > 0 && (
-                        <span className="absolute -top-2 -right-2 bg-gradient-to-r from-pink-500 to-red-500 text-white text-xs rounded-full h-6 w-6 flex items-center justify-center font-bold animate-pulse">
-                          {cartCount}
-                        </span>
-                      )}
-                    </div>
-                  </Link>
-                )}
+                <CartIcon user={user} />
                 
                 <Link 
                   href="/categories"

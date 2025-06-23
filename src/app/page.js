@@ -6,6 +6,7 @@ import HeroSlider from '@/components/HeroSlider'
 import Newsletter from '@/components/Newsletter'
 import AddToCartButton from '@/components/AddToCartButton'
 import ImageWithFallback from '@/components/ImageWithFallback'
+import CartIcon from '@/components/CartIcon'
 
 export default async function HomePage() {
   const user = await getCurrentUser()
@@ -107,10 +108,7 @@ export default async function HomePage() {
                         Admin Panel
                       </Link>
                     )}
-                    <Link href="/cart" className="relative p-3 text-xl text-slate-400 hover:text-blue-400 transition-colors rounded-lg hover:bg-slate-700/50">
-                      🛒
-                      <span className="absolute -top-1 -right-1 w-3 h-3 bg-red-500 rounded-full animate-pulse"></span>
-                    </Link>
+                    <CartIcon user={user} />
                   </div>
                 </>
               ) : (

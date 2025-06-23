@@ -21,26 +21,47 @@ async function makeAdmin() {
       console.log(`${index + 1}. ${user.name} (${user.email}) - Rol: ${user.role}`)
     })
     
-    // USER rolündeki kullanıcıları ADMIN yap
-    const normalUsers = users.filter(u => u.role === 'USER')
+    // Mevcut admin sayısını kontrol et
+    const adminUsers = users.filter(u => u.role === 'ADMIN')
     
-    if (normalUsers.length > 0) {
-      console.log('\n🔧 Normal kullanıcıları admin yapıyorum...')
+    if (adminUsers.length > 1) {
+      console.log('\n⚠️  Birden fazla admin bulundu! Sadece bir admin kalacak şekilde düzenleniyor...')
       
-      for (const user of normalUsers) {
+      // İlk admin hariç diğerlerini USER yap
+      const adminsToDowngrade = adminUsers.slice(1)
+      
+      for (const admin of adminsToDowngrade) {
         await prisma.user.update({
-          where: { id: user.id },
-          data: { role: 'ADMIN' }
+          where: { id: admin.id },
+          data: { role: 'USER' }
         })
-        console.log(`✅ ${user.email} artık admin!`)
+        console.log(`🔻 ${admin.email} kullanıcı rolüne geçirildi`)
       }
       
-      console.log(`\n🎯 Toplam ${normalUsers.length} kullanıcı admin yapıldı!`)
-    } else {
-      console.log('\n✅ Tüm kullanıcılar zaten admin!')
+      console.log(`\n✅ Sadece ${adminUsers[0].email} admin olarak kaldı`)
+      
+    } else if (adminUsers.length === 1) {
+      console.log(`\n✅ Sistem zaten düzgün: ${adminUsers[0].email} tek admin`)
+      
+    } else if (adminUsers.length === 0) {
+      // Hiç admin yok, ilk kullanıcıyı admin yap
+      if (users.length > 0) {
+        const firstUser = users[0]
+        await prisma.user.update({
+          where: { id: firstUser.id },
+          data: { role: 'ADMIN' }
+        })
+        console.log(`\n🔺 ${firstUser.email} admin yapıldı (ilk kullanıcı)`)
+      } else {
+        console.log('\n❌ Hiç kullanıcı bulunamadı!')
+      }
     }
     
     console.log('\n🎉 İşlem tamamlandı!')
+    console.log('📋 Sistem kuralları:')
+    console.log('   • Sadece bir admin olabilir')
+    console.log('   • Admin rolü değiştirilemez')
+    console.log('   • Yeni admin atanamaz')
     
   } catch (error) {
     console.error('❌ Hata:', error)

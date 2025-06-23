@@ -1,16 +1,15 @@
 import Link from 'next/link'
-import { getCurrentUser, getPublicProducts, getCartCount } from '@/lib/actions'
+import { getCurrentUser, getPublicProducts } from '@/lib/actions'
 import { getSiteSettings } from '@/lib/site-actions'
 import AddToCartButton from '@/components/AddToCartButton'
 import LogoutButton from '@/components/LogoutButton'
 import ImageWithFallback from '@/components/ImageWithFallback'
-import CartList from '@/components/CartList'
+import CartIcon from '@/components/CartIcon'
 
 export default async function ProductsPage() {
   const user = await getCurrentUser()
-  const [products, cartCount, siteSettingsResult] = await Promise.all([
+  const [products, siteSettingsResult] = await Promise.all([
     getPublicProducts(),
-    user ? getCartCount() : Promise.resolve(0),
     getSiteSettings()
   ])
   
@@ -64,8 +63,8 @@ export default async function ProductsPage() {
             <div className="flex items-center space-x-4">
               {user ? (
                 <>
-                  {/* Cart Button */}
-                  <CartList />
+                  {/* Cart Icon */}
+                  <CartIcon user={user} />
                   
                   {/* User Menu */}
                   <div className="flex items-center space-x-3">
