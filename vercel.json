@@ -11,7 +11,6 @@
     }
   ],
   "env": {
-    "DISABLE_ERD": "true",
     "NODE_ENV": "production"
   },
   "buildCommand": "npm run vercel-build"

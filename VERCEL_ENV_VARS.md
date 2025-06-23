@@ -2,13 +2,21 @@
 
 Vercel Dashboard'da şu environment variable'ları ekleyin:
 
-## Gerekli Environment Variables
+## Gerekli Environment Variables (MySQL)
 
 ```
-DATABASE_URL=file:/tmp/database.db
+DATABASE_URL=mysql://username:password@host:3306/database_name
 JWT_SECRET=your-super-secret-jwt-key-livkors-2024-very-secure
 INIT_DB_TOKEN=livkors-init-2024
-DISABLE_ERD=true
+NODE_ENV=production
+```
+
+## PlanetScale Örneği (Önerilen)
+
+```
+DATABASE_URL=mysql://username:password@aws.connect.psdb.cloud/database_name?sslaccept=strict
+JWT_SECRET=your-super-secret-jwt-key-livkors-2024-very-secure
+INIT_DB_TOKEN=livkors-init-2024
 NODE_ENV=production
 ```
 
@@ -25,10 +33,10 @@ NODE_ENV=production
 
 ## Database Yapısı
 
-SQLite database `/tmp/database.db` konumunda oluşturulacak.
-Bu temporary bir lokasyon olduğu için her deploy'da database sıfırlanacak.
+MySQL database cloud provider'da (PlanetScale, AWS RDS, vb.) hosted olacak.
+Production için kalıcı ve güvenilir bir çözüm.
 
-Production için PostgreSQL kullanmanız önerilir.
+Önerilen provider: **PlanetScale** (serverless MySQL)
 
 ## Admin Bilgileri
 
@@ -38,7 +46,8 @@ Production için PostgreSQL kullanmanız önerilir.
 
 ## Önemli Notlar
 
-- SQLite Vercel'de her deploy'da sıfırlanır
-- Production için PostgreSQL/MySQL önerilir
+- MySQL database kalıcıdır ve deploy'da korunur
+- PlanetScale ücretsiz tier 10GB'a kadar sunar
 - Database automatic olarak seed edilecek
-- Site ayarları ve kategoriler otomatik oluşacak 
+- Site ayarları ve kategoriler otomatik oluşacak
+- MySQL performans ve ölçeklenebilirlik avantajları sunar 
