@@ -1,13 +1,14 @@
-# Vercel Environment Variables - Railway MySQL
+# Vercel Environment Variables - PostgreSQL
 
 Vercel Dashboard'da şu environment variable'ları ekleyin:
 
-## 🚀 Railway MySQL Configuration
+## 🚀 Vercel Postgres Configuration
 
 ### Environment Variables
 
 ```env
-DATABASE_URL=mysql://root:aRoeDNnUnDdbqXqosxiEMJorEJUDeMwa@tramway.proxy.rlwy.net:15903/railway
+# Vercel Postgres (Production)
+DATABASE_URL=postgresql://username:password@host:5432/database_name
 JWT_SECRET=your-super-secret-jwt-key-livkors-2024-very-secure
 INIT_DB_TOKEN=livkors-init-2024
 NODE_ENV=production
@@ -15,26 +16,38 @@ NODE_ENV=production
 
 ## 📋 Vercel Deployment Adımları
 
-### 1. Vercel Dashboard'da Project Oluşturun
-- Vercel.com'a gidin
-- GitHub repository'nizi import edin
-- Project name: `livkors-ecommerce`
+### 1. Vercel Storage - PostgreSQL Database Oluşturun
 
-### 2. Environment Variables Ekleyin
-Vercel Dashboard > Settings > Environment Variables:
+1. **Vercel Dashboard** > **Storage** sekmesi
+2. **Create Database** > **Postgres**
+3. **Database Name**: `livkors-db`
+4. **Region**: Size yakın bölge seçin (örn: Frankfurt)
+5. **Create** butonuna tıklayın
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | `mysql://root:aRoeDNnUnDdbqXqosxiEMJorEJUDeMwa@tramway.proxy.rlwy.net:15903/railway` |
-| `JWT_SECRET` | `your-super-secret-jwt-key-livkors-2024-very-secure` |
-| `INIT_DB_TOKEN` | `livkors-init-2024` |
-| `NODE_ENV` | `production` |
+### 2. Connection String'i Alın
 
-### 3. Build & Deploy
-- Vercel otomatik olarak build edecek
-- Build başarılı olursa deployment tamamlanır
+1. Database oluşturulduktan sonra
+2. **Database Overview** > **Connect** sekmesi
+3. **Environment Variables** bölümünden `DATABASE_URL`'i kopyalayın
 
-### 4. Database Initialization (İsteğe Bağlı)
+### 3. Vercel Project Environment Variables
+
+Vercel Dashboard > Project > Settings > Environment Variables:
+
+| Variable | Value | Environment |
+|----------|-------|-------------|
+| `DATABASE_URL` | `postgresql://...` (Vercel Postgres'ten) | Production, Preview, Development |
+| `JWT_SECRET` | `your-super-secret-jwt-key-livkors-2024-very-secure` | Production, Preview, Development |
+| `INIT_DB_TOKEN` | `livkors-init-2024` | Production, Preview, Development |
+| `NODE_ENV` | `production` | Production |
+
+### 4. Build & Deploy
+
+- GitHub integration aktifse otomatik deploy başlar
+- Manuel deploy: `npx vercel --prod`
+
+### 5. Database Initialization
+
 Deploy sonrası database'i initialize etmek için:
 
 ```bash
@@ -43,10 +56,10 @@ curl -X POST https://your-app.vercel.app/api/init-db?token=livkors-init-2024
 
 ## ✅ Şu Anki Durum
 
-- **Database**: ✅ Railway MySQL - Aktif
-- **Tables**: ✅ Tüm tablolar oluşturuldu
-- **Data**: ✅ 6 kategori, 8 ürün, admin user
-- **Connection**: ✅ Test edildi ve çalışıyor
+- **Database**: ✅ PostgreSQL - Vercel Postgres Ready
+- **Schema**: ✅ Prisma schema PostgreSQL provider'a güncellendi
+- **Drivers**: ✅ pg ve @types/pg yüklendi
+- **Client**: ✅ Prisma Client PostgreSQL için generate edildi
 
 ## 🔐 Admin Bilgileri
 
@@ -56,7 +69,7 @@ curl -X POST https://your-app.vercel.app/api/init-db?token=livkors-init-2024
 ## 🎯 Production Hazır
 
 Projeniz şimdi production'a deploy edilmeye hazır!
-Railway MySQL database kalıcıdır ve Vercel ile mükemmel çalışır.
+Vercel Postgres enterprise-grade bir PostgreSQL çözümüdür.
 
 ## 🚀 Deployment Komutu (CLI ile)
 
@@ -64,14 +77,25 @@ Railway MySQL database kalıcıdır ve Vercel ile mükemmel çalışır.
 # Vercel CLI ile deploy
 npx vercel --prod
 
-# Veya GitHub'dan otomatik deploy
-# Vercel GitHub integration aktif olduğunda
-# Her push otomatik deploy tetikler
+# GitHub'dan otomatik deploy
+git push origin main
 ```
 
-## 📊 Performans Notları
+## 📊 Vercel Postgres Avantajları
 
-- Railway MySQL: Yüksek performans
-- Global CDN: Vercel Edge Network
-- Serverless Functions: Otomatik scaling
-- Database Connection Pooling: Prisma ile optimize 
+- **🌍 Global Edge Network**: Dünya çapında düşük latency
+- **⚡ Connection Pooling**: Otomatik connection yönetimi
+- **🔒 SSL/TLS Encryption**: Enterprise güvenlik
+- **📈 Auto Scaling**: Trafik artışında otomatik scaling
+- **💰 Hobby Plan**: Ücretsiz tier ile başlangıç
+- **🛠️ Fully Managed**: Backup, monitoring, maintenance
+
+## 🏁 Sonraki Adımlar
+
+1. **Vercel Dashboard'da PostgreSQL database oluşturun**
+2. **Environment variables'ları ekleyin**
+3. **Deploy edin**
+4. **Database'i initialize edin**
+5. **Admin paneline giriş yapın**
+
+Artık enterprise-grade PostgreSQL ile production'da çalışıyorsunuz! 🎉 
