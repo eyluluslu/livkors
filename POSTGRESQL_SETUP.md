@@ -1,149 +1,238 @@
-# PostgreSQL Kurulum Rehberi
+# PostgreSQL Kurulum Rehberi - Livkors E-Commerce
 
-## 🗄️ Database Değişikliği: MySQL → PostgreSQL
+Bu proje artık tamamen **PostgreSQL** veritabanını kullanmaktadır. Bu rehber size local development ve production environment için PostgreSQL kurulumunu gösterecektir.
 
-Projeniz başarıyla **PostgreSQL** kullanacak şekilde güncellendi!
+## 🗄️ Mevcut Durum
 
-## 📋 Yapılan Değişiklikler
+- ✅ **Prisma Schema**: PostgreSQL olarak güncellenmiştir
+- ✅ **Dependencies**: `pg` ve `@types/pg` yüklü
+- ✅ **Production Schema**: Vercel deployment için hazır
+- ❌ **Local Database**: PostgreSQL kurulumu gerekli
 
-- ✅ `prisma/schema.prisma` - Provider PostgreSQL olarak güncellendi
-- ✅ `pg` ve `@types/pg` driver'ları yüklendi
-- ✅ Prisma Client PostgreSQL için yeniden generate edildi
-- ✅ Environment configuration PostgreSQL formatında hazırlandı
+## 📋 Gereksinimler
 
-## 🚀 Vercel Postgres (Production - Önerilen)
+### Local Development
+- PostgreSQL 14+ 
+- Node.js 18+
+- npm/yarn
 
-### 1. Vercel Dashboard'da PostgreSQL Database
+### Production (Vercel)
+- Vercel Postgres Database
 
-1. **Vercel Dashboard'a gidin**
-2. **Storage** sekmesine tıklayın
-3. **Create Database** > **Postgres**
-4. **Database Name**: `livkors-db`
-5. **Region**: Size yakın bir bölge seçin
-6. **Create** butonuna tıklayın
+## 🚀 Local Development Kurulum
 
-### 2. Environment Variables
+### 1. PostgreSQL Kurulumu
 
-Vercel database oluşturduktan sonra `.env.local` sekmesinden connection string'i alın:
+#### Windows:
+```bash
+# PostgreSQL'i indirin ve kurun
+# https://www.postgresql.org/download/windows/
+```
+
+#### macOS (Homebrew):
+```bash
+brew install postgresql@14
+brew services start postgresql@14
+```
+
+#### Ubuntu/Debian:
+```bash
+sudo apt update
+sudo apt install postgresql postgresql-contrib
+sudo systemctl start postgresql
+```
+
+### 2. Database Oluşturma
+
+```bash
+# PostgreSQL'e bağlanın
+psql -U postgres
+
+# Database oluşturun
+CREATE DATABASE livkors_db;
+
+# User oluşturun (opsiyonel)
+CREATE USER livkors_user WITH PASSWORD 'your_password';
+GRANT ALL PRIVILEGES ON DATABASE livkors_db TO livkors_user;
+
+# Çıkış
+\q
+```
+
+### 3. Environment Variables
+
+`.env` dosyası oluşturun:
 
 ```env
-# Vercel Postgres
-DATABASE_URL="postgresql://username:password@host:5432/database_name"
-JWT_SECRET="your-super-secret-jwt-key-livkors-2024-very-secure"
-INIT_DB_TOKEN="livkors-init-2024"
-NODE_ENV="production"
-```
-
-## 🛠️ Local Development (İsteğe Bağlı)
-
-### Docker ile PostgreSQL
-
-```bash
-# PostgreSQL container başlatma
-docker run --name postgres-livkors -e POSTGRES_PASSWORD=password -e POSTGRES_DB=livkors_db -p 5432:5432 -d postgres:15
-
-# Connection string
+# Database Configuration - PostgreSQL
 DATABASE_URL="postgresql://postgres:password@localhost:5432/livkors_db"
+
+# Eğer özel user oluşturduysanız:
+# DATABASE_URL="postgresql://livkors_user:your_password@localhost:5432/livkors_db"
+
+# JWT Secret Key
+JWT_SECRET="your-super-secret-jwt-key-livkors-2024-very-secure"
+
+# Database initialization token
+INIT_DB_TOKEN="livkors-init-2024"
+
+# Node Environment
+NODE_ENV="development"
 ```
 
-### PostgreSQL App (macOS)
+### 4. Database Migration ve Seed
 
 ```bash
-# Homebrew ile kurulum
-brew install postgresql@15
-brew services start postgresql@15
+# Prisma client generate
+npm run db:generate
 
-# Database oluşturma
-createdb livkors_db
+# Database schema push
+npm run db:push
 
-# Connection string
-DATABASE_URL="postgresql://username@localhost:5432/livkors_db"
-```
-
-### Windows PostgreSQL
-
-1. **PostgreSQL İndir**: https://www.postgresql.org/download/windows/
-2. **Installer çalıştır** ve varsayılan ayarları kullan
-3. **pgAdmin** ile database oluştur: `livkors_db`
-4. **Connection string**:
-   ```env
-   DATABASE_URL="postgresql://postgres:your_password@localhost:5432/livkors_db"
-   ```
-
-## ⚡ Hızlı Başlangıç (Vercel Postgres)
-
-### 1. Vercel Dashboard Setup
-
-1. **Vercel.com** > **Storage** > **Create Database** > **Postgres**
-2. Database oluşturulduktan sonra **Connection String**'i kopyalayın
-3. **Environment Variables**'a ekleyin
-
-### 2. Local Development
-
-```bash
-# .env dosyasını güncelleyin
-echo 'DATABASE_URL="postgresql://..."' > .env
-echo 'JWT_SECRET="your-super-secret-jwt-key-livkors-2024-very-secure"' >> .env
-
-# Database schema'yı push edin
-npx prisma db push
-
-# Verileri seed edin
+# Test data ekle
 npm run db:seed
 
-# Development server'ı başlatın
+# Ya da tek komutla
+npm run db:init
+```
+
+### 5. Development Server
+
+```bash
 npm run dev
 ```
 
-## 🎯 Vercel Deployment
+## 🌐 Production Deployment (Vercel)
 
-### Environment Variables
+### 1. Vercel Postgres Database Oluşturma
 
-Vercel Dashboard > Settings > Environment Variables:
+1. [Vercel Dashboard](https://vercel.com/dashboard)'a gidin
+2. **Storage** sekmesine tıklayın
+3. **Create Database** → **Postgres** seçin
+4. Database adı: `livkors-db`
+5. Region: `Frankfurt (fra1)` (Türkiye'ye yakın)
 
-| Variable | Value |
-|----------|-------|
-| `DATABASE_URL` | Vercel Postgres connection string |
-| `JWT_SECRET` | `your-super-secret-jwt-key-livkors-2024-very-secure` |
-| `INIT_DB_TOKEN` | `livkors-init-2024` |
-| `NODE_ENV` | `production` |
+### 2. Environment Variables (Vercel)
 
-### Deployment
+Vercel dashboard'da şu environment variables'ları ekleyin:
+
+```env
+DATABASE_URL=postgresql://[vercel-postgres-connection-string]
+JWT_SECRET=your-super-secret-jwt-key-livkors-2024-very-secure
+INIT_DB_TOKEN=livkors-init-2024
+NODE_ENV=production
+```
+
+### 3. Deployment
 
 ```bash
-# CLI ile deploy
+# Production build ve deploy
 npx vercel --prod
-
-# Veya GitHub integration ile otomatik deploy
-git push origin main
 ```
 
-## 📊 PostgreSQL Avantajları
-
-- **🌍 Global**: Vercel Postgres global olarak dağıtılmış
-- **⚡ Performans**: Connection pooling ve caching
-- **🔒 Güvenlik**: SSL/TLS encryption
-- **📈 Ölçeklenebilirlik**: Otomatik scaling
-- **💰 Maliyet**: Vercel Hobby plan ile ücretsiz tier
-- **🛠️ Yönetim**: Fully managed, backup ve monitoring
-
-## 🔄 Database Migration
-
-Önceki verilerinizi taşımak için:
+### 4. Database Initialization (Sadece İlk Deployment)
 
 ```bash
-# Eski database'den export
-pg_dump old_database_url > backup.sql
-
-# Yeni database'e import
-psql new_database_url < backup.sql
+# Production database'i initialize edin
+curl -X POST https://your-app-url.vercel.app/api/init-db?token=livkors-init-2024
 ```
 
-## 🏁 Sonuç
+## 🛠️ Yararlı Komutlar
 
-Projeniz artık **PostgreSQL** kullanıyor ve **Vercel Postgres** ile production'a deploy edilmeye hazır!
+```bash
+# Prisma Client generate
+npm run db:generate
 
-- ✅ **Development**: Docker, PostgreSQL App, veya local installation
-- ✅ **Production**: Vercel Postgres (önerilen)
-- ✅ **Performance**: Enterprise-grade database
-- ✅ **Scalability**: Global distribution ve auto-scaling 
+# Database push (migration olmadan)
+npm run db:push
+
+# Database reset (TEHLİKELİ - tüm data siler)
+npm run db:reset
+
+# Seed data ekle
+npm run db:seed
+
+# Production schema ile generate
+npx prisma generate --schema=prisma/schema.production.prisma
+
+# Database studio (GUI)
+npx prisma studio
+```
+
+## 🔧 Troubleshooting
+
+### 1. Connection Hatası
+```
+Error: Authentication failed for user "postgres"
+```
+**Çözüm**: PostgreSQL password'ünüzü kontrol edin
+
+### 2. Database Bulunamadı
+```
+Error: database "livkors_db" does not exist
+```
+**Çözüm**: Database oluşturun:
+```bash
+createdb livkors_db
+```
+
+### 3. Port Çakışması
+```
+Error: EADDRINUSE :::5432
+```
+**Çözüm**: PostgreSQL servisini restart edin:
+```bash
+# Windows
+net stop postgresql-x64-14
+net start postgresql-x64-14
+
+# macOS
+brew services restart postgresql@14
+
+# Linux
+sudo systemctl restart postgresql
+```
+
+### 4. Prisma Client Hatası
+```
+Error: Cannot find module '@prisma/client'
+```
+**Çözüm**: 
+```bash
+npm install
+npm run db:generate
+```
+
+## 📊 Database Schema
+
+Proje şu modelleri içerir:
+
+- **User**: Kullanıcı bilgileri ve authentication
+- **Product**: Ürün bilgileri
+- **Category**: Ürün kategorileri
+- **Cart/CartItem**: Sepet sistemi
+- **Order/OrderItem**: Sipariş sistemi
+- **Message**: Mesajlaşma sistemi
+- **Address**: Kullanıcı adresleri
+- **PaymentMethod**: Ödeme yöntemleri
+- **SiteSettings**: Site genel ayarları
+- **HeroBanner**: Ana sayfa banner'ları
+- **AboutPage**: Hakkımızda sayfası
+- **Newsletter**: E-posta aboneliği
+
+## 🎯 Next Steps
+
+1. ✅ PostgreSQL kurulumu
+2. ✅ Environment variables setup
+3. ✅ Database migration
+4. ✅ Seed data ekleme
+5. ✅ Admin user oluşturma (`admin@livkors.com` / `123456`)
+6. ✅ Development server başlatma
+
+## 📞 Destek
+
+Herhangi bir sorun yaşarsanız:
+1. Terminal output'unu kontrol edin
+2. `.env` dosyanızı kontrol edin
+3. PostgreSQL servisinin çalıştığından emin olun
+4. Database bağlantı string'ini doğrulayın 
